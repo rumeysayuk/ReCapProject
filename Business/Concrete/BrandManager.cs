@@ -19,26 +19,33 @@ namespace Business.Concrete
             if (brand.BrandName.Length > 2)
             {
                 _brandDal.Add(brand);
+                Console.WriteLine("Marka eklendi.");
+            }
+            else
+            {
+                Console.WriteLine("Marka ismi 2 karakterden fazla olmalıdır.");
             }
         }
 
         public void Delete(Brand brand)
         {
             _brandDal.Add(brand);
+            Console.WriteLine("Marka silindi.");
         }
 
         public List<Brand> GetAll()
         {
              return  _brandDal.GetAll();
         }
-        public List<Brand> GetBrandById(int id)
+        public List<Brand> GetCarsByBrandId(int brandId)
         {
-            return _brandDal.GetAll(b => b.brandId == id);
+            return _brandDal.GetAll(b => b.BrandId == brandId);
         }
 
         public void Update(Brand brand)
         {
             _brandDal.Update(brand);
+            Console.WriteLine("Marka güncellendi.");
         }
     }
 }

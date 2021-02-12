@@ -16,11 +16,11 @@ namespace DataAccess.Concrete.InMemory
         {
             _car = new List<Car>
             {
-                 new Car{Id=1,BrandId=1,ColorId=1,DailyPrice=1,Description="Kaliteli araba" },
-                 new Car{Id=2,BrandId=1,ColorId=2,DailyPrice=2,Description="Güzel araba" },
-                 new Car{Id=2,BrandId=1,ColorId=3,DailyPrice=3,Description="Mor araba" },
-                 new Car{Id=2,BrandId=1,ColorId=4,DailyPrice=4,Description="Pahali araba" },
-                 new Car{Id=2,BrandId=1,ColorId=5,DailyPrice=5,Description="Kalitesiz araba" },
+                 new Car{CarId=1,BrandId=1,ColorId=1,DailyPrice=1,Description="Kaliteli araba" },
+                 new Car{CarId=2,BrandId=1,ColorId=2,DailyPrice=2,Description="Güzel araba" },
+                 new Car{CarId=2,BrandId=1,ColorId=3,DailyPrice=3,Description="Mor araba" },
+                 new Car{CarId=2,BrandId=1,ColorId=4,DailyPrice=4,Description="Pahali araba" },
+                 new Car{CarId=2,BrandId=1,ColorId=5,DailyPrice=5,Description="Kalitesiz araba" },
 
             };
         }
@@ -31,12 +31,12 @@ namespace DataAccess.Concrete.InMemory
         public void Delete(Car car )
         {
             Car carToDelete = null;
-            carToDelete = _car.SingleOrDefault(c => c.Id == car.Id);
+            carToDelete = _car.SingleOrDefault(c => c.CarId == car.CarId);
         }
         public void Update(Car car)
         {
-            Car carToUpdate = _car.SingleOrDefault(c => c.Id == car.Id);
-            carToUpdate.Id = car.Id;
+            Car carToUpdate = _car.SingleOrDefault(c => c.CarId == car.CarId);
+            carToUpdate.CarId = car.CarId;
             carToUpdate.BrandId = car.BrandId;
             carToUpdate.ColorId = car.ColorId;
             carToUpdate.DailyPrice = car.DailyPrice;
@@ -48,7 +48,7 @@ namespace DataAccess.Concrete.InMemory
         }
         public List<Car> GetById(int carId)
         {
-            return _car.Where(c => c.Id == carId).ToList();
+            return _car.Where(c => c.CarId == carId).ToList();
         }
 
         public List<CarDetailDto> GetCarDetails()
