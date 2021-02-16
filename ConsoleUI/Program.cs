@@ -70,8 +70,8 @@ namespace ConsoleUI
         private static void Test2(BrandManager brandManager, ColorManager colorManager)
         {
             Console.WriteLine("Ürünlerin Markasını Listele");
-
-            foreach (var brand in brandManager.GetAll())
+            var result = brandManager.GetAll();
+            foreach (var brand in result.Data)
             {
                 Console.WriteLine(brand.BrandId + "/" + brand.BrandName);
             }
@@ -79,8 +79,8 @@ namespace ConsoleUI
             //brandManager.Add(new Brand { BrandId = 6, BrandName="Toyota" });
 
             Console.WriteLine("Ürünlerin Rengini Listele");
-
-            foreach (var color in colorManager.GetAll())
+            var result2 = colorManager.GetAll();
+            foreach (var color in result2.Data)
             {
                 Console.WriteLine(color.ColorId + "/" + color.ColorName);
             }
