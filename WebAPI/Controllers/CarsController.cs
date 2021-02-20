@@ -32,10 +32,10 @@ namespace WebAPI.Controllers
                 return Ok(result);
             }
             return BadRequest(result);
+
         }
-        [HttpGet("getbybrandıd")] 
-        public IActionResult GetByBrandId(int brandId)
-        {
+        [HttpGet("getbybrandıd")]
+        public IActionResult GeyByBrandId(int brandId) {
             var result = _carService.GetCarsByBrandId(brandId);
             if (result.Success)
             {
