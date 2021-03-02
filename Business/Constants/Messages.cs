@@ -36,10 +36,9 @@ namespace Business.Constants
         public static string ColorListedId = "Markalar idye göre Listelendi";
 
         public static string ColorNameInvalid = "Renk ismi geçersiz";
-        //  public static string CustomerUpdated = "Araç Güncellendi";
 
+        public static string ImageLimitFull = "Max resim sayısına ulaşıldı";
 
-
-
+        public static string CarImageAdded= "Araba resmi eklendi";
     }
 }

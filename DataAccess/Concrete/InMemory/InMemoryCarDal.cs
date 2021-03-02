@@ -44,7 +44,7 @@ namespace DataAccess.Concrete.InMemory
         }
         public List<Car> GetAll()
         {
-            return _car;
+            return _car.ToList(); ;
         }
         public List<Car> GetById(int carId)
         {
@@ -58,7 +58,7 @@ namespace DataAccess.Concrete.InMemory
 
         public List<Car> GetAll(Expression<Func<Car, bool>> filter = null)
         {
-            throw new NotImplementedException();
+           return _car.ToList();
         }
 
         public Car Get(Expression<Func<Car, bool>> filter)
