@@ -1,4 +1,5 @@
-﻿using Entities.Concrete;
+﻿using Core.Entities.Concrete;
+using Entities.Concrete;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -11,9 +12,9 @@ namespace Business.ValidationRules.FluentValidation
         public UserValidator()
         {
             RuleFor(u => u.FirstName).NotEmpty();
+            RuleFor(u => u.FirstName).MinimumLength(3);
             RuleFor(u => u.LastName).NotEmpty();
-            RuleFor(u => u.Password).NotEmpty();
-            RuleFor(u => u.Password).GreaterThanOrEqualTo(4);
+            RuleFor(u => u.LastName).MinimumLength(2);
             RuleFor(u => u.Email).NotEmpty().WithMessage("Mailinizi boş geçemezsiniz!");
 
 

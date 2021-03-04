@@ -2,6 +2,7 @@
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
+using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -21,12 +22,8 @@ namespace Business.Concrete
         [ValidationAspect(typeof(UserValidator))]
         public IResult Add(User users)
         {
-            if (users.Email.Contains("@"))
-            {
-                _userDal.Add(users);
-                return new SuccessResult(Messages.UserAdded);
-            }
-            return new ErrorResult(Messages.MailInvalid);
+              _userDal.Add(users);
+              return new SuccessResult(Messages.UserAdded);   
         }
 
         public IResult Delete(User users)
@@ -37,7 +34,7 @@ namespace Business.Concrete
 
         public IDataResult<List<User>> GetAllUsers()
         {
-            if (DateTime.Now.Hour == 23)
+            if (DateTime.Now.Hour == 3)
             {
                 return new ErrorDataResult<List<User>>(Messages.MaintenanceTime);
             }
@@ -46,8 +43,19 @@ namespace Business.Concrete
 
         public IDataResult<List<User>> GetByIdUsers(int id)
         {
-            return new SuccessDataResult<List<User>>(_userDal.GetAll(p => p.UserId == id), Messages.UserListed);
+            return new SuccessDataResult<List<User>>(_userDal.GetAll(p => p.Id == id), Messages.UserListed);
         }
+
+        public IDataResult< User> GetByMail(string email)
+        {
+            return new SuccessDataResult<User> (_userDal.Get(u => u.Email == email));
+        }
+
+        public IDataResult<List<OperationClaim>> GetClaims(User user)
+        {
+            return new SuccessDataResult<List<OperationClaim>>(_userDal.GetClaims(user), Messages.ClaimsListed);
+        }
+
         [ValidationAspect(typeof(UserValidator))]
         public IResult Update(User users)
         {

@@ -8,10 +8,9 @@ namespace Entities.Concrete
 {
    public class Customer:IEntity
     {
-[Key]
+    [Key]
         public int CustomerId { get; set; }
-        public int UserId { get; set; }
-       
+        public int Id { get; set; }
         public string CompanyName { get; set; }
     }
 }

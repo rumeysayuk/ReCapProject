@@ -5,6 +5,7 @@ using Business.Constants;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
+using Core.Entities.Concrete;
 
 namespace ConsoleUI
 {
@@ -19,15 +20,15 @@ namespace ConsoleUI
             CustomerManager customerManager = new CustomerManager(new EfCustomerDal());
             UserManager userManager = new UserManager(new EfUserDal());
             RentalManager rentalManager = new RentalManager(new EfRentalDal());
-            customerManager.Add(new Customer { UserId = 1, CompanyName = "Tesla" });
-            customerManager.Add(new Customer { UserId = 1, CompanyName = "Amazon" });
-            customerManager.Add(new Customer { UserId = 1, CompanyName = "Trendyol" });
+            customerManager.Add(new Customer { Id = 1, CompanyName = "Tesla" });
+            customerManager.Add(new Customer { Id = 1, CompanyName = "Amazon" });
+            customerManager.Add(new Customer { Id = 1, CompanyName = "Trendyol" });
 
 
-            userManager.Add(new User { Email = "asd@gmail.com", FirstName = "Rümeysa", LastName = "Yük", Password = 123456, });
-            userManager.Add(new User { Email = "yusuf@gmail.com", FirstName = "Ahmet", LastName = "Tas", Password = 7895 });
-            userManager.Add(new User { Email = "mahmut@gmail.com", FirstName = "Nuriye", LastName = "Ulsak", Password = 896321 });
-            userManager.Add(new User { Email = "yalın@gmail.com", FirstName = "Kemal", LastName = "atcı", Password = 7852 });
+            //userManager.Add(new User { Email = "asd@gmail.com", FirstName = "Rümeysa", LastName = "Yük", Password = 123456, });
+            //userManager.Add(new User { Email = "yusuf@gmail.com", FirstName = "Ahmet", LastName = "Tas", Password = 7895 });
+            //userManager.Add(new User { Email = "mahmut@gmail.com", FirstName = "Nuriye", LastName = "Ulsak", Password = 896321 });
+            //userManager.Add(new User { Email = "yalın@gmail.com", FirstName = "Kemal", LastName = "atcı", Password = 7852 });
 
             var result = carManager.GetCarDetails();
             if (result.Success)

@@ -22,7 +22,7 @@ namespace DataAccess.Concrete.EntityFramework
                              join brand in context.Brands on car.BrandId equals brand.BrandId
                              join color in context.Colors on car.ColorId equals color.ColorId
                              join cus in context.Customers on rent.CustomerId equals cus.CustomerId
-                             join user in context.Users on cus.UserId equals user.UserId
+                             join user in context.Users on cus.Id equals user.Id
                              select new RentalDetailDto
                              {
                                  Id = rent.Id,
