@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataAccess.Concrete.EntityFramework;
+using System.Threading;
 
 namespace WebAPI.Controllers
 {
@@ -26,14 +27,27 @@ namespace WebAPI.Controllers
         [HttpGet("getall")]
         public IActionResult GetAll()
         {
+           // Thread.Sleep(3000);
             var result = _carService.GetAll();
             if (result.Success)
             {
                 return Ok(result);
             }
             return BadRequest(result);
-
         }
+        [HttpGet("getdetails")]
+        public IActionResult GetDetails()
+        {
+            var result = _carService.GetCarDetails();
+                
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
+            
+        }
+
         [HttpGet("getbybrandıd")]
         public IActionResult GeyByBrandId(int brandId) {
             var result = _carService.GetCarsByBrandId(brandId);
@@ -44,9 +58,9 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
         [HttpGet("getbycolorıd")]
-        public IActionResult GetCarsByColorId(int colorıd)
+        public IActionResult GetCarsByColorId(int colorId)
         {
-            var result = _carService.GetCarsByColorId(colorıd);
+            var result = _carService.GetCarsByColorId(colorId);
             if (result.Success)
             {
                 return Ok(result);
