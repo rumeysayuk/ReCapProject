@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
 
 namespace Core.Extensions
 {
-   public static class ClaimExtensions
+    public static class ClaimExtensions
     {
         public static void AddEmail(this ICollection<Claim> claims, string email)
         {

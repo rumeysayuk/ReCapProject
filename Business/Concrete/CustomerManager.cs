@@ -7,57 +7,69 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using Business.BusinessAspects.Autofac;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Performance;
 
 namespace Business.Concrete
 {
-  public  class CustomerManager : ICustomerService
+    public class CustomerManager: ICustomerService
     {
-        ICustomerDal _customerDal;        
+        private readonly ICustomerDal _customerDal;
+
         public CustomerManager(ICustomerDal customerDal)
         {
             _customerDal = customerDal;
         }
+
         [ValidationAspect(typeof(CustomerValidator))]
-        public IResult Add(Customer customers)
+        [CacheRemoveAspect("ICustomerService.Get")]
+        [SecuredOperation("Customer.Add")]
+        public IResult Add(Customer customer)
         {
-            _customerDal.Add(customers);
+            if (customer.CompanyName.Length <= 2)
+            {
+                return new ErrorResult(Messages.CompanyNameInvalid);
+            }
+            _customerDal.Add(customer);
             return new SuccessResult(Messages.CustomerAdded);
+
         }
 
-        public IResult Delete(Customer customers)
+        [SecuredOperation("Customer.Delete")]
+        public IResult Delete(Customer customer)
         {
-            _customerDal.Delete(customers);
+            _customerDal.Delete(customer);
             return new SuccessResult(Messages.CustomerDeleted);
         }
 
-        public IDataResult<List<Customer>> GetAllCustomers()
+        [CacheAspect]
+        public IDataResult<List<Customer>> GetAll()
         {
-            if (DateTime.Now.Hour == 23)
+            if (DateTime.Now.Hour == 00)
             {
                 return new ErrorDataResult<List<Customer>>(Messages.MaintenanceTime);
             }
-            return new SuccessDataResult<List<Customer>>(_customerDal.GetAll(), Messages.CustomerAdded);
+            return new SuccessDataResult<List<Customer>>(_customerDal.GetAll(), Messages.CustomerListed);
         }
 
-        public IDataResult <Customer> GetByCompanyName(string companyName)
+        [CacheAspect]
+        [PerformanceAspect(5)]
+        public IDataResult<Customer> GetById(int id)
         {
-            if (DateTime.Now.Hour == 23)
+            if (DateTime.Now.Hour == 00)
             {
                 return new ErrorDataResult<Customer>(Messages.MaintenanceTime);
             }
-            return new SuccessDataResult<Customer>(_customerDal.Get(p => p.CompanyName.Contains(companyName)),Messages.CustomerAdded) ;
+            return new SuccessDataResult<Customer>(_customerDal.Get(b => b.UserId == id));
         }
 
-        public IResult Update(Customer customers)
+        [SecuredOperation("Customer.Update")]
+        public IResult Update(Customer customer)
         {
-            _customerDal.Update(customers);
-            return new SuccessResult(Messages.UserUpdated);
+            _customerDal.Update(customer);
+            return new SuccessResult(Messages.CustomerUpdated);
         }
 
-        IDataResult<Customer> ICustomerService.GetByCompanyName(string companyName)
-        {
-            return new SuccessDataResult<Customer>(_customerDal.Get(p => p.CompanyName.Contains(companyName)), Messages.CustomerAdded);
-        }
     }
 }

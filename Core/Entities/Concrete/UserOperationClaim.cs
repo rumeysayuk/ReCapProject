@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Core.Entities.Concrete
+﻿namespace Core.Entities.Concrete
 {
-   public class UserOperationClaim:IEntity
+    public class UserOperationClaim
     {
         public int Id { get; set; }
         public int UserId { get; set; }

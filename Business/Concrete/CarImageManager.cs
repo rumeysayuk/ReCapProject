@@ -1,96 +1,96 @@
-﻿using Business.Abstract;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Performance;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
-using Core.Utilities.Helpers;
+using Core.Utilities.FileHelper;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq.Expressions;
-using System.Linq;
-using Core.Aspects.Autofac.Caching;
 
 namespace Business.Concrete
 {
     public class CarImageManager : ICarImageService
     {
-        ICarImageDal _carImageDal;
-        public CarImageManager(ICarImageDal carImageDal)
+        private readonly ICarImageDal _carImageDal;
+        private ICarService _carService;
+        public CarImageManager(ICarImageDal carImageDal, ICarService carService)
         {
             _carImageDal = carImageDal;
+            _carService = carService;
         }
 
-        [ValidationAspect(typeof(CarImageValidator))]
-        public IResult Add(IFormFile file, CarImage carImage)
-        {
-            IResult result = BusinessRules.Run(CheckIfImageLimitExceded(carImage.CarId));
-            if (result != null)
-            {
-                return result;
-            }
-
-           carImage.ImagePath = FileHelper.Add(file);
-            carImage.Date = DateTime.Now;
-            _carImageDal.Add(carImage);
-            return new SuccessResult(Messages.CarImageAdded);   
-        }
-
-        public IResult Delete(CarImage carImage)
-        {
-            FileHelper.Delete(carImage.ImagePath);
-            _carImageDal.Delete(carImage);
-            return new SuccessResult();
-        }
-
-        public IDataResult<CarImage> Get(int id)
-        {
-            return new SuccessDataResult<CarImage>(_carImageDal.Get(c => c.CarId == id));
-        }
         [CacheAspect]
         public IDataResult<List<CarImage>> GetAll()
         {
             return new SuccessDataResult<List<CarImage>>(_carImageDal.GetAll());
         }
+
         [CacheAspect]
-        public IDataResult<List<CarImage>> GetImagesByCarId(int id)
+        [PerformanceAspect(5)]
+        public IDataResult<CarImage> Get(int id)
         {
-            return new SuccessDataResult<List<CarImage>>(_carImageDal.GetAll(c=>c.CarId==id));
+            var carImage = _carImageDal.Get(ci => ci.Id == id);
+            if (carImage == null) return new ErrorDataResult<CarImage>(Messages.CarImageNotFound);
+            return new SuccessDataResult<CarImage>(carImage);
         }
+
+        public IDataResult<List<CarImage>> GetByCarId(int carId)
+        {
+            var result = _carImageDal.GetAll(ci => ci.Id == carId);
+            if (result.Any()) return new SuccessDataResult<List<CarImage>>(result);
+            return new SuccessDataResult<List<CarImage>>(new List<CarImage>
+            {
+                new CarImage{ ImagePath = "default.jpg", Date = DateTime.Now }
+            });
+        }
+
+       // [SecuredOperation("CarImage.Add")]
+        [ValidationAspect(typeof(CarImageValidator))]
+        public IResult Add(IFormFile file,CarImage carImage)
+        {
+            var result = BusinessRules.Run(CheckCarImagesCount(carImage.CarId));
+            if (result != null) return result;
+            carImage.ImagePath = FileHelper.SaveImageFile("Images",file);
+            carImage.Date = DateTime.Now;
+            _carImageDal.Add(carImage);
+            return new SuccessResult(Messages.CarImageAdded);
+        }
+
         [ValidationAspect(typeof(CarImageValidator))]
         public IResult Update(IFormFile file, CarImage carImage)
         {
-            carImage.ImagePath=FileHelper.Update(_carImageDal.Get(c=>c.Id==carImage.Id).ImagePath,file);
-            carImage.Date = DateTime.Now;
-            _carImageDal.Update(carImage);
-            return new SuccessResult();
+            var entity = _carImageDal.Get(ci => ci.Id == carImage.Id);
+            if (entity == null) return new ErrorResult(Messages.CarImageNotFound);
+            FileHelper.DeleteImageFile(entity.ImagePath);
+            entity.ImagePath = FileHelper.SaveImageFile("Images", file);
+            entity.Date = DateTime.Now;
+            _carImageDal.Update(entity);
+            return new SuccessResult(Messages.CarImageUpdated);
         }
-        private IResult CheckIfImageLimitExceded(int carId)
+
+        [SecuredOperation("CarImage.Delete")]
+        public IResult Delete(CarImage carImage)
         {
-            var ımageCount = _carImageDal.GetAll(c => c.CarId == carId).Count;
-            if (ımageCount >= 5)
-            {
-                return new ErrorResult(Messages.ImageLimitFull);
-            }
-            return new SuccessResult();
+            var entity = _carImageDal.Get(ci => ci.Id == carImage.Id);
+            if (entity == null) return new ErrorResult(Messages.CarImageNotFound);
+            FileHelper.DeleteImageFile(entity.ImagePath);
+            _carImageDal.Delete(carImage);
+            return new SuccessResult(Messages.CarImageDeleted);
         }
-        private  List<CarImage> CheckIfCarImageNull(int id)
+        private IResult CheckCarImagesCount(int carId)
         {
-            string path = Environment.CurrentDirectory + @"\images\DefaultCar.jpg";
-            var result = _carImageDal.GetAll(c => c.CarId == id).Any();
-
-            if (result)
-            {
-                return _carImageDal.GetAll(p => p.CarId == id);
-            }
-
-            return new List<CarImage> { new CarImage { CarId =id, ImagePath = path, Date = DateTime.Now } };
+            var result = _carImageDal.GetAll(ci => ci.CarId == carId).Count < 5;
+            if (!result) return new ErrorResult(Messages.CarImageCountExceeded);
+            return new SuccessResult();
         }
     }
-
 }

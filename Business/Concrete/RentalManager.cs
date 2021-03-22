@@ -8,64 +8,83 @@ using Entities.Concrete;
 using Entities.DTOs;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Linq.Expressions;
+using Business.BusinessAspects.Autofac;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Performance;
+using Core.Aspects.Autofac.Transaction;
+using Core.Entities.Concrete;
 
 namespace Business.Concrete
 {
-   public class RentalManager:IRentalService
+    public class RentalManager : IRentalService
     {
-        IRentalDal _rentalDal;
-        public RentalManager(IRentalDal rentalDal)
+        private readonly IRentalDal _rentalDal;
+        private IPaymentService _paymentService;
+
+        public RentalManager(IRentalDal rentalDal, IPaymentService paymentService)
         {
             _rentalDal = rentalDal;
+            _paymentService = paymentService;
         }
+
         [ValidationAspect(typeof(RentalValidator))]
-        public IResult Add(Rental rentals)
+        //[SecuredOperation("Rental.Add")]
+        public IResult Add(Rental rental)
         {
-            var carRentalList = _rentalDal.GetAll(r => r.CarId == rentals.CarId);
-            foreach (var carRental in carRentalList)
-            {
-                if (carRental.ReturnDate == null || carRental.ReturnDate > DateTime.Now || carRental.ReturnDate > rentals.RentDate)
-                {
-                    return new ErrorResult("Araç kiralanamaz çünkü başka bir müşteride");
-                }
-            }
-            _rentalDal.Add(rentals);
-            return new SuccessResult(Messages.CarRental);
+            if (rental.ReturnDate == null && 
+                _rentalDal.GetRentalDetailsById(rental.CarId).Count > 0)
+                return new ErrorResult(Messages.NoReturnDate);
+
+            _rentalDal.Add(rental);
+            return new SuccessResult(Messages.RentalAdded);
+        }
+        [TransactionScopeAspect]
+        public IResult TransactionalOperation(Rental rental)
+        {
+            _rentalDal.Add(rental);
+            return new SuccessResult(Messages.CarRentalSuccess);
+        }
+        [SecuredOperation("Rental.Delete")]
+        public IResult Delete(Rental rental)
+        {
+            _rentalDal.Delete(rental);
+            return new SuccessResult(Messages.RentalDeleted);
         }
 
-        public IResult CheckReturnDate(int carId)
+        [CacheAspect]
+        public IDataResult<List<Rental>> GetAll()
         {
-            var result = _rentalDal.GetRentalDetails(r => r.CarId == carId && r.ReturnDate == null);
-         
-            if (result.Count>0)
+            if (DateTime.Now.Hour == 00)
             {
-                return new ErrorResult(Messages.CArNameInvalid);
+                return new ErrorDataResult<List<Rental>>(Messages.MaintenanceTime);
             }
-            return new SuccessResult(Messages.CarRental);
-        }
-        public IResult UpdateReturnDate(int carId)
-        {
-            var result = _rentalDal.GetAll(r => r.CarId == carId);
-            var updateRental = result.LastOrDefault();
-            if(updateRental.ReturnDate!= null)
-            {
-                return new ErrorResult();
-            }
-            updateRental.ReturnDate = DateTime.Now;
-            _rentalDal.Update(updateRental);
-            return new SuccessResult(Messages.CarsUpdated);
+            return new SuccessDataResult<List<Rental>>(_rentalDal.GetAll(), Messages.RentalListed);
         }
 
-        public IDataResult<List<Rental>> GetAllRentals()
+        [CacheAspect]
+        [PerformanceAspect(5)]
+        public IDataResult<Rental> GetById(int id)
         {
-            return new SuccessDataResult<List<Rental>>(_rentalDal.GetAll(), Messages.CarRental);
+            return new SuccessDataResult<Rental>(_rentalDal.Get(b => b.Id == id));
         }
 
-        public IDataResult<List<RentalDetailDto>> GetRentalDetails(int carId)
+        public IDataResult<List<RentalDetailDto>> GetRentalDetailsById(int id)
         {
-            return new SuccessDataResult<List<RentalDetailDto>>(_rentalDal.GetRentalDetails(r => r.CarId == carId));
+            return new SuccessDataResult<List<RentalDetailDto>>(_rentalDal.GetRentalDetailsById(id));
+        }
+
+        public IDataResult<List<RentalDetailDto>> GetRentalDetails()
+        {
+            return new SuccessDataResult<List<RentalDetailDto>>
+                (_rentalDal.GetRentalDetails());
+        }
+
+        [SecuredOperation("Rental.Update")]
+        public IResult Update(Rental rental)
+        {
+            _rentalDal.Update(rental);
+            return new SuccessResult(Messages.RentalUpdated);
         }
     }
 }

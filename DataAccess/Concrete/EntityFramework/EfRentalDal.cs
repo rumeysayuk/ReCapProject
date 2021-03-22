@@ -4,36 +4,58 @@ using Entities.Concrete;
 using Entities.DTOs;
 using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace DataAccess.Concrete.EntityFramework
 {
-    public class EfRentalDal : EfEntityRepositoryBase<Rental, ReCapProjectContext>, IRentalDal
+    public class EfRentalDal : EfEntityRepositoryBase<Rental, RentACarDbContext>, IRentalDal
     {
-        public List<RentalDetailDto> GetRentalDetails(Expression<Func<Rental, bool>> filter = null)
+        public List<RentalDetailDto> GetRentalDetailsById(int id)
         {
-            using (var context=new ReCapProjectContext())
+            using (RentACarDbContext context = new RentACarDbContext())
             {
-                var result = from rent in context.Rentals
-                             join car in context.Cars on rent.CarId equals car.CarId
-                             join brand in context.Brands on car.BrandId equals brand.BrandId
-                             join color in context.Colors on car.ColorId equals color.ColorId
-                             join cus in context.Customers on rent.CustomerId equals cus.CustomerId
-                             join user in context.Users on cus.Id equals user.Id
+                var result = 
+                    from r in context.Rentals.Where(c=>c.CarId==id)
+                             join c in context.Cars on r.CarId equals c.Id
+                             join cu in context.Customers on r.CustomerId equals cu.Id
+                             join b in context.Brands on c.BrandId equals b.BrandId
+                             join u in context.Users on cu.UserId equals u.Id
                              select new RentalDetailDto
                              {
-                                 Id = rent.Id,
-                                 CarName = car.CarName,
-                                 RentDate = rent.RentDate,
-                                 ReturnDate = rent.ReturnDate,
-                                 FirstName = user.FirstName,
-                                 LastName = user.LastName
+                                 Id = r.Id,
+                                 CarId = c.Id,
+                                 BrandName = b.BrandName,
+                                 CustomerName = cu.CompanyName,
+                                 UserName = $"{u.FirstName} {u.LastName}",
+                                 RentDate = DateTime.Now,
+                                 ReturnDate = r.ReturnDate
                              };
                 return result.ToList();
+            }
+        }
 
+        public List<RentalDetailDto> GetRentalDetails()
+        {
+            using (RentACarDbContext context = new RentACarDbContext())
+            {
+                var result =
+                    from r in context.Rentals
+                    join c in context.Cars on r.CarId equals c.Id
+                    join cu in context.Customers on r.CustomerId equals cu.Id
+                    join b in context.Brands on c.BrandId equals b.BrandId
+                    join u in context.Users on cu.UserId equals u.Id
+                    select new RentalDetailDto
+                    {
+                        Id = r.Id,
+                        CarId = c.Id,
+                        BrandName = b.BrandName,
+                        CustomerName = cu.CompanyName,
+                        UserName = $"{u.FirstName} {u.LastName}",
+                        RentDate = DateTime.Now,
+                        ReturnDate = r.ReturnDate
+                    };
+                return result.ToList();
             }
         }
     }

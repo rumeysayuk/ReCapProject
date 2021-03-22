@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Core.Utilities.Security.JWT
+﻿namespace Core.Utilities.Security.JWT
 {
-
     public class TokenOptions
     {
         public string Audience { get; set; }

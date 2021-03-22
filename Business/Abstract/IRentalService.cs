@@ -3,17 +3,20 @@ using Entities.Concrete;
 using Entities.DTOs;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq.Expressions;
 
 namespace Business.Abstract
 {
-   public interface IRentalService
+    public interface IRentalService
     {
-        IResult Add(Rental rentals);
-        IResult CheckReturnDate(int carId);
-        IResult UpdateReturnDate(int carId);
-        IDataResult<List<RentalDetailDto>> GetRentalDetails(int carId);
-        IDataResult<List<Rental>> GetAllRentals();
-
+        IResult Add(Rental rental);
+        IResult TransactionalOperation(Rental rental);
+        IResult Update(Rental rental);
+        IResult Delete(Rental rental);
+        IDataResult<List<Rental>> GetAll();
+        IDataResult<Rental> GetById(int rentalId);
+        
+        IDataResult<List<RentalDetailDto>> GetRentalDetailsById(int id);
+        IDataResult<List<RentalDetailDto>> GetRentalDetails();
     }
 }

@@ -1,20 +1,19 @@
-﻿using Core.Utilities.Results;
+﻿using System.Collections.Generic;
+using Core.Utilities.Results;
 using Entities.Concrete;
+using Entities.DTOs;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Business.Abstract
 {
-   public interface ICarImageService
+    public interface ICarImageService
     {
-        IDataResult<List<CarImage>> GetAll();                                                                                                                                
+        IDataResult<List<CarImage>> GetAll();
         IDataResult<CarImage> Get(int id);
-        IResult Add(IFormFile file, CarImage carImage);
-        IResult Delete(CarImage carImage);
+        IDataResult<List<CarImage>> GetByCarId(int carId);
+        IResult Add(IFormFile file,CarImage carImage);
         IResult Update(IFormFile file, CarImage carImage);
-        IDataResult<List<CarImage>> GetImagesByCarId(int id);
+        IResult Delete(CarImage carImage);
 
     }
 }
