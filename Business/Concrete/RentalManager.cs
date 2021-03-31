@@ -14,6 +14,7 @@ using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Performance;
 using Core.Aspects.Autofac.Transaction;
 using Core.Entities.Concrete;
+using System.Linq;
 
 namespace Business.Concrete
 {
@@ -85,6 +86,15 @@ namespace Business.Concrete
         {
             _rentalDal.Update(rental);
             return new SuccessResult(Messages.RentalUpdated);
+        }
+        public IResult CheckRent(int id)
+        {
+            var result = _rentalDal.GetAll().Where(c => c.CarId == id).LastOrDefault();
+            if(result != null  && (result.ReturnDate !=null && result.ReturnDate>=DateTime.Now))
+            {
+                return new SuccessResult();
+            }
+            return new ErrorResult();
         }
     }
 }

@@ -56,16 +56,7 @@ namespace WebAPI.Controllers
 
             return BadRequest(result.Message);
         }
-        [HttpPost("add2")]
-        public IActionResult Add2(Rental rental)
-        {
-            var result = _rentalService.Add(rental);
-
-            if (result.Success)
-                return Ok(result);
-
-            return BadRequest(result.Message);
-        }
+    
         [HttpPost("delete")]
         public IActionResult Delete(Rental rental)
         {
@@ -115,6 +106,16 @@ namespace WebAPI.Controllers
         {
 
             var result = _rentalService.GetRentalDetails();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        [HttpGet("checkrent")]
+        public IActionResult CheckRent(int id)
+        {
+            var result = _rentalService.CheckRent(id);
             if (result.Success)
             {
                 return Ok(result);

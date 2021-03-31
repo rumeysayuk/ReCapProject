@@ -13,6 +13,7 @@ namespace Business.Abstract
         IResult TransactionalOperation(Rental rental);
         IResult Update(Rental rental);
         IResult Delete(Rental rental);
+        IResult CheckRent(int id);
         IDataResult<List<Rental>> GetAll();
         IDataResult<Rental> GetById(int rentalId);
         
