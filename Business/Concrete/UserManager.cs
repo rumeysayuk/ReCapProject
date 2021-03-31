@@ -38,7 +38,6 @@ namespace Business.Concrete
             return new SuccessResult(Messages.UserDeleted);
         }
 
-        [CacheAspect]
         public IDataResult<List<User>> GetAll()
         {
             if (DateTime.Now.Hour == 00)
@@ -47,8 +46,6 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<User>>(_userDal.GetAll(), Messages.UserListed);
         }
-
-        [CacheAspect]
         [PerformanceAspect(5)]
         public IDataResult<User> GetById(int id)
         {
@@ -65,13 +62,11 @@ namespace Business.Concrete
             return new SuccessResult(Messages.UserUpdated);
         }
 
-        [CacheAspect]
         public IDataResult<List<OperationClaim>> GetClaims(User user)
         {
             return new SuccessDataResult<List<OperationClaim>>(_userDal.GetClaims(user));
         }
 
-        [CacheAspect]
         [PerformanceAspect(5)]
         public IDataResult<User> GetByMail(string email)
         {

@@ -53,7 +53,6 @@ namespace Business.Concrete
             return new SuccessResult(Messages.RentalDeleted);
         }
 
-        [CacheAspect]
         public IDataResult<List<Rental>> GetAll()
         {
             if (DateTime.Now.Hour == 00)
@@ -62,8 +61,6 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<Rental>>(_rentalDal.GetAll(), Messages.RentalListed);
         }
-
-        [CacheAspect]
         [PerformanceAspect(5)]
         public IDataResult<Rental> GetById(int id)
         {
