@@ -17,13 +17,13 @@ namespace DataAccess.Concrete.EntityFramework
             {
                 var result =
                     from r in context.Rentals.Where(c => c.CarId == id)
-                    join c in context.Cars on r.CarId equals c.Id
+                    join c in context.Cars on r.CarId equals c.CarId
                     join b in context.Brands on c.BrandId equals b.BrandId
                     join u in context.Users on r.UserId equals u.Id
                     select new RentalDetailDto
                     {
                         Id = r.Id,
-                        CarId = c.Id,
+                        CarId = c.CarId,
                         BrandName = b.BrandName,
                         UserName = $"{u.FirstName} {u.LastName}",
                         RentDate = DateTime.Now,
@@ -39,14 +39,14 @@ namespace DataAccess.Concrete.EntityFramework
             {
                 var result =
                     from r in context.Rentals
-                    join c in context.Cars on r.CarId equals c.Id
+                    join c in context.Cars on r.CarId equals c.CarId
                     join cu in context.Customers on r.UserId equals cu.Id
                     join b in context.Brands on c.BrandId equals b.BrandId
                     join u in context.Users on cu.UserId equals u.Id
                     select new RentalDetailDto
                     {
                         Id = r.Id,
-                        CarId = c.Id,
+                        CarId = c.CarId,
                         BrandName = b.BrandName,
                         CustomerName = cu.CompanyName,
                         UserName = $"{u.FirstName} {u.LastName}",

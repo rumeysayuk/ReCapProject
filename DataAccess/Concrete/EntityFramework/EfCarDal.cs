@@ -18,21 +18,21 @@ namespace DataAccess.Concrete.EntityFramework
                 var result = (from p in filter == null ? context.Cars : context.Cars.Where(filter)
                               join c in context.Colors on p.ColorId equals c.ColorId
                               join d in context.Brands on p.BrandId equals d.BrandId
-                              join im in context.CarImages on p.Id equals im.CarId
+                              join im in context.CarImages on p.CarId equals im.CarId
                               select new CarDetailDto
                               {
-    
+
                                   BrandName = d.BrandName,
                                   ColorName = c.ColorName,
                                   DailyPrice = p.DailyPrice,
                                   Description = p.Description,
                                   ModelYear = p.ModelYear,
-                                  Id = p.Id,
+                                  CarId = p.CarId,
                                   Date = im.Date,
                                   ImagePath = im.ImagePath,
                                   ImageId = im.Id
                               }).ToList();
-                return result.GroupBy(c => c.Id).Select(c=>c.FirstOrDefault()).ToList();
+                return result.GroupBy(c => c.CarId).Select(c => c.FirstOrDefault()).ToList();
             }
         }
 
@@ -43,8 +43,8 @@ namespace DataAccess.Concrete.EntityFramework
                 var result = from p in context.Cars
                              join c in context.Colors on p.ColorId equals c.ColorId
                              join d in context.Brands on p.BrandId equals d.BrandId
-                             join im in context.CarImages on p.Id equals im.CarId
-                             where p.Id == carId
+                             join im in context.CarImages on p.CarId equals im.CarId
+                             where p.CarId == carId
                              select new CarDetailDto
                              {
                                  BrandName = d.BrandName,
@@ -52,7 +52,7 @@ namespace DataAccess.Concrete.EntityFramework
                                  DailyPrice = p.DailyPrice,
                                  Description = p.Description,
                                  ModelYear = p.ModelYear,
-                                 Id = p.Id,
+                                 CarId = p.CarId,
                                  Date = im.Date,
                                  ImagePath = im.ImagePath,
                                  ImageId = im.Id
@@ -67,22 +67,22 @@ namespace DataAccess.Concrete.EntityFramework
 
                 var result = (from car in context.Cars.Where
                         (car => car.BrandId == brandId && car.ColorId == colorId)
-                             join brand in context.Brands on car.BrandId equals brand.BrandId
-                             join color in context.Colors on car.ColorId equals color.ColorId
-                             join im in context.CarImages on car.Id equals im.CarId
-                             select new CarDetailDto
-                             {
-                                 Id = car.Id,
-                                 BrandName = brand.BrandName,
-                                 ColorName = color.ColorName,
-                                 DailyPrice = car.DailyPrice,
-                                 ModelYear = car.ModelYear,
-                                 Description = car.Description,
-                                 Date = im.Date,
-                                 ImagePath = im.ImagePath,
-                                 ImageId = im.Id
-                             }).ToList();
-                return result.GroupBy(p => p.Id)
+                              join brand in context.Brands on car.BrandId equals brand.BrandId
+                              join color in context.Colors on car.ColorId equals color.ColorId
+                              join im in context.CarImages on car.CarId equals im.CarId
+                              select new CarDetailDto
+                              {
+                                  CarId = car.CarId,
+                                  BrandName = brand.BrandName,
+                                  ColorName = color.ColorName,
+                                  DailyPrice = car.DailyPrice,
+                                  ModelYear = car.ModelYear,
+                                  Description = car.Description,
+                                  Date = im.Date,
+                                  ImagePath = im.ImagePath,
+                                  ImageId = im.Id
+                              }).ToList();
+                return result.GroupBy(p => p.CarId)
                     .Select(p => p.FirstOrDefault()).ToList(); ;
             }
         }
