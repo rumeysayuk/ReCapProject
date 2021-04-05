@@ -27,14 +27,14 @@ namespace Business.Concrete
 
         [ValidationAspect(typeof(CarValidator))]
         [CacheRemoveAspect("ICarService.Get")]
-        //[SecuredOperation("Car.Add")]
+        [SecuredOperation("Car.Add,admin")]
         public IResult Add(Car car)
         {
             _carDal.Add(car);
             return new SuccessResult(Messages.CarAdded);
 
         }
-        //[SecuredOperation("Car.Delete")]
+        [SecuredOperation("Car.Delete")]
         public IResult Delete(Car car)
         {
             _carDal.Delete(car);
