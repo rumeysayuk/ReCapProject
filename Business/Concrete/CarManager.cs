@@ -95,5 +95,10 @@ namespace Business.Concrete
             _carDal.Update(car);
             return new SuccessResult(Messages.CarPriceInvalid);
         }
+
+        public IDataResult<Car> GetCarFindeks(int carId)
+        {
+            return new SuccessDataResult<Car> (_carDal.Get(c=> c.CarId == carId));
+        }
     }
 }

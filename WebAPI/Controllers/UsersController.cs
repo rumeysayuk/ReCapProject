@@ -15,7 +15,7 @@ namespace WebAPI.Controllers
             _userService = userService;
         }
 
-        [HttpGet]
+        [HttpGet("getusers")]
         public IActionResult GetAll()
         {
             var result = _userService.GetAll();
@@ -63,6 +63,17 @@ namespace WebAPI.Controllers
         public IActionResult Update(User user)
         {
             var result = _userService.Update(user);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("getbyemail")]
+        public IActionResult GetByEMail(string email)
+        {
+            var result = _userService.GetByMail(email);
             if (result.Success)
             {
                 return Ok(result);

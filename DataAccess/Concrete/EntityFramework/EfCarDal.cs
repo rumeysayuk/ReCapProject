@@ -28,6 +28,7 @@ namespace DataAccess.Concrete.EntityFramework
                                   Description = p.Description,
                                   ModelYear = p.ModelYear,
                                   CarId = p.CarId,
+                                  FindeksPoint = p.FindeksPoint,
                                   Date = im.Date,
                                   ImagePath = im.ImagePath,
                                   ImageId = im.Id

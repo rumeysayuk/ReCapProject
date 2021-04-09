@@ -124,6 +124,18 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("getfindekspoint")]
+        public IActionResult GetCarFindeks(int id)
+        {
+
+            var result = _carService.GetCarFindeks(id);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
         //[HttpGet("getbrandandcolor")]
         //public IActionResult GetCarBrandandColor(int brandId,int colorId)
         //{
