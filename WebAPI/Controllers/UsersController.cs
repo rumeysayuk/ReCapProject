@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using Core.Entities.Concrete;
+using Entities.Concrete;
 
 namespace WebAPI.Controllers
 {
@@ -69,11 +70,21 @@ namespace WebAPI.Controllers
             }
             return BadRequest(result);
         }
-
         [HttpGet("getbyemail")]
         public IActionResult GetByEMail(string email)
         {
             var result = _userService.GetByMail(email);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpPost("getfindeks")]
+        public IActionResult GetFindeks([FromBody] Findeks findeks)
+        {
+            var result = _userService.GetUserFindeks(findeks);
             if (result.Success)
             {
                 return Ok(result);
