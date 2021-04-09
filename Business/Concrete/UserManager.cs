@@ -10,6 +10,8 @@ using Business.BusinessAspects.Autofac;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Performance;
 using Core.Entities.Concrete;
+using Entities.Concrete;
+using Entities.DTOs;
 
 namespace Business.Concrete
 {
@@ -71,6 +73,15 @@ namespace Business.Concrete
         public IDataResult<User> GetByMail(string email)
         {
             return new SuccessDataResult<User>(_userDal.Get(u => u.Email == email));
+        }
+
+        public IDataResult<FindeksDto> GetUserFindeks(Findeks findeks)
+        {
+            var random = new Random();
+            return new SuccessDataResult<FindeksDto>(new FindeksDto
+            {
+                FindeksScore = random.Next(1, 1900)
+            });
         }
     }
 }
