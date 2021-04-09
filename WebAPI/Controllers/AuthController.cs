@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Business.Abstract;
+using Core.Entities.Concrete;
 using Entities.DTOs;
 
 namespace WebAPI.Controllers
@@ -49,6 +50,17 @@ namespace WebAPI.Controllers
                 return Ok(result);
             }
 
+            return BadRequest(result.Message);
+        }
+
+        [HttpPost("update")]
+        public ActionResult Update([FromBody] UserForUpdateDto userForUpdateDto)
+        {
+            var result = _authService.Update(userForUpdateDto.User, userForUpdateDto.Password);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
             return BadRequest(result.Message);
         }
     }
