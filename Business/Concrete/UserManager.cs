@@ -52,6 +52,7 @@ namespace Business.Concrete
         public IDataResult<User> GetById(int id)
         {
             if (DateTime.Now.Hour == 5)
+
             {
                 return new ErrorDataResult<User>(Messages.MaintenanceTime);
             }
