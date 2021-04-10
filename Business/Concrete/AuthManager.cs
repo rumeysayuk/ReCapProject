@@ -82,7 +82,7 @@ namespace Business.Concrete
                 PasswordSalt = passwordSalt,
                 Status = user.Status
             };
-            _userService.Update(user);
+            _userService.Update(updatedUser);
             return new SuccessResult(Messages.UserUpdated);
         }
     }
